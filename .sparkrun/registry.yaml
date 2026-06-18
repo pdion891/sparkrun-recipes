@@ -2,3 +2,4 @@ registries:
   - name: pdion891
     description: Spark Arena registry for recipes
     recipes: recipes
+
