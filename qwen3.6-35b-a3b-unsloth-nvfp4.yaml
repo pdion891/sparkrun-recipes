@@ -1,0 +1,56 @@
+# Recipe: unsloth/Qwen3.6-35B-A3B-NVFP4
+# Qwen/Qwen3.5-35B-A3B model in native FP8 format
+
+
+recipe_version: "1"
+name: Qwen3.6-35B-A3B-NVFP4
+description: vLLM serving Qwen3.6-35B-A3B-NVFP4
+runtime: vllm
+# HuggingFace model to download (optional, for --download-model)
+model: unsloth/Qwen3.6-35B-A3B-NVFP4
+
+#solo_only: true
+
+# Container image to use
+container: vllm-node
+
+# Mod required to fix slowness and crash in the cluster (tracking https://github.com/vllm-project/vllm/issues/33857)
+mods:
+  - mods/fix-qwen3-coder-next
+  - mods/fix-qwen3.5-chat-template
+
+# Default settings (can be overridden via CLI)
+defaults:
+  port: 8000
+  host: 0.0.0.0
+  tensor_parallel: 1
+  gpu_memory_utilization: 0.8
+  max_model_len: 262144
+  max_num_batched_tokens: 16384
+
+# Environment variables
+env:
+  VLLM_MAX_TOKENS_PER_EXPERT_FP4_MOE: 163840
+
+# The vLLM serve command template
+command: |
+  vllm serve unsloth/Qwen3.6-35B-A3B-NVFP4 \
+    --host {host} \
+    --port {port} \
+    --max-model-len {max_model_len} \
+    --max-num-batched-tokens {max_num_batched_tokens} \
+    --gpu-memory-utilization {gpu_memory_utilization} \
+    --enable-auto-tool-choice \
+    --tool-call-parser qwen3_xml \
+    --trust-remote-code \
+    --kv-cache-dtype fp8 \
+    --load-format fastsafetensors \
+    --attention-backend flashinfer \
+    --enable-prefix-caching \
+    --chat-template unsloth.jinja \
+    --reasoning-parser qwen3 \
+    --moe_backend flashinfer_cutlass \
+    --language-model-only \
+    -tp {tensor_parallel}
+
+#     --speculative-config '{"method":"qwen3_next_mtp","num_speculative_tokens":2}' \
