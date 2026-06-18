@@ -1,8 +1,4 @@
 registries:
   - name: pdion891
     description: Spark Arena registry for recipes
-    recipes: pdion891-recipes
-    tuning: tuning
-    benchmarks: benchmarking
-    mods: official-mods
-
+    recipes: recipes
