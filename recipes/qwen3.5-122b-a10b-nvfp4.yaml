@@ -37,6 +37,9 @@ command: |
     --gpu-memory-utilization {gpu_memory_utilization} \
     --port {port} \
     --host {host} \
+    --trust-remote-code \
+    --quantization modelopt_fp4 \
+    --kv-cache-dtype fp8 \
     --load-format fastsafetensors \
     --enable-prefix-caching \
     --enable-auto-tool-choice \
